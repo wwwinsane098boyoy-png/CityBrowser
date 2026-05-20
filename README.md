@@ -1,18 +1,28 @@
-## Getting Started
+# Dehradun City Browser
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+A modern JavaFX desktop application for exploring information about Dehradun city.
 
-## Folder Structure
+## Features
 
-The workspace contains two folders by default, where:
+- Modern animated UI
+- Places to visit
+- Food & cuisine section
+- Weather information
+- Local news section
+- Business hub
+- Travel essentials
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+## Tech Stack
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
+- Java
+- JavaFX
+- VS Code
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
+## Run
 
-## Dependency Management
+Make sure JavaFX SDK is installed and configured.
 
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+Run the application using VS Code or:
+
+```bash
+java --module-path "PATH_TO_FX/lib" --add-modules javafx.controls,javafx.fxml
