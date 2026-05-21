@@ -8,7 +8,7 @@ import javafx.animation.*;
 import javafx.application.Application;
 import javafx.geometry.*;
 import javafx.scene.Scene;
-import javafx.scene.control.*;   
+import javafx.scene.control.*;
 import javafx.scene.effect.*;
 import javafx.scene.image.*;
 import javafx.scene.layout.*;
@@ -19,7 +19,6 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
-import javafx.stage.Screen;
 import javafx.geometry.Rectangle2D;
 
 public class DehradunBrowserApp extends Application {
@@ -30,177 +29,144 @@ public class DehradunBrowserApp extends Application {
     private VBox contentArea;
     private String currentSection = "HOME";
 
-    // Color Palette
-    public static final Color PRIMARY = Color.web("#667eea");
-    public static final Color SECONDARY = Color.web("#764ba2");
-    public static final Color ACCENT = Color.web("#f093fb");
-    public static final Color DARK_BG = Color.web("#0f0c29");
-    public static final Color CARD_BG = Color.web("rgba(255,255,255,0.08)");
+    // ── LeetCode-inspired Color Palette ───────────────────────────────────────
+    public static final Color PRIMARY      = Color.web("#FFA116");   // LeetCode amber/orange
+    public static final Color SECONDARY    = Color.web("#FFB800");   // Gold accent
+    public static final Color ACCENT       = Color.web("#FFA116");   // Amber accent
+    public static final Color DARK_BG      = Color.web("#1A1A1A");   // Deep black background
+    public static final Color DARKER_BG    = Color.web("#141414");   // Even darker
+    public static final Color CARD_BG      = Color.web("#282828");   // Card / surface
+    public static final Color SIDEBAR_BG   = Color.web("#1E1E1E");   // Sidebar
+    public static final Color BORDER_COLOR = Color.web("#333333");   // Subtle borders
+    public static final Color TEXT_PRIMARY  = Color.web("#EFEFEF");   // Bright white text
+    public static final Color TEXT_SECONDARY= Color.web("#A0A0A0");  // Muted grey text
+    public static final Color TEXT_MUTED    = Color.web("#5C5C5C");  // Very muted text
+    public static final Color HOVER_BG     = Color.web("#303030");   // Hover surface
+    public static final Color ACTIVE_BG    = Color.web("#2A2A2A");   // Active / selected
 
     private double xOffset = 0;
     private double yOffset = 0;
-@Override
-public void start(Stage primaryStage) {
 
-    primaryStage.initStyle(StageStyle.UNDECORATED);
+    @Override
+    public void start(Stage primaryStage) {
 
-    rootStack = new StackPane();
-    rootStack.setStyle("-fx-background-color: transparent;");
+        primaryStage.initStyle(StageStyle.UNDECORATED);
 
-    // Animated background
-    Rectangle bgRect = createAnimatedBackground();
-    rootStack.getChildren().add(bgRect);
+        rootStack = new StackPane();
+        rootStack.setStyle("-fx-background-color: #1A1A1A;");
 
-    // Particles
-    Pane particlePane = createParticles();
-    rootStack.getChildren().add(particlePane);
+        // ── Solid dark background ─────────────────────────────────────────────
+        Rectangle bgRect = createBackground();
+        rootStack.getChildren().add(bgRect);
 
-    mainLayout = new BorderPane();
+        // ── Main layout ───────────────────────────────────────────────────────
+        mainLayout = new BorderPane();
 
-    HBox titleBar = createTitleBar(primaryStage);
-    mainLayout.setTop(titleBar);
+        HBox titleBar = createTitleBar(primaryStage);
+        mainLayout.setTop(titleBar);
 
-    VBox sidebar = createSidebar();
-    mainLayout.setLeft(sidebar);
+        VBox sidebar = createSidebar();
+        mainLayout.setLeft(sidebar);
 
-    contentArea = new VBox(20);
-    contentArea.setPadding(new Insets(25));
-    contentArea.setAlignment(Pos.TOP_LEFT);
+        contentArea = new VBox(20);
+        contentArea.setPadding(new Insets(30));
+        contentArea.setAlignment(Pos.TOP_LEFT);
+        contentArea.setStyle("-fx-background-color: transparent;");
 
-    contentScroll = new ScrollPane(contentArea);
-    contentScroll.setFitToWidth(true);
-    contentScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-
-    mainLayout.setCenter(contentScroll);
-
-    rootStack.getChildren().add(mainLayout);
-
-    Scene scene = new Scene(rootStack, 1300, 800);
-
-    // Dynamic clip
-    Rectangle clip = new Rectangle();
-    clip.setArcWidth(20);
-    clip.setArcHeight(20);
-
-    clip.widthProperty().bind(scene.widthProperty());
-    clip.heightProperty().bind(scene.heightProperty());
-
-    rootStack.setClip(clip);
-
-    scene.setFill(Color.TRANSPARENT);
-
-    String css = getInlineCSS();
-    if (css != null && !css.isEmpty()) {
-        scene.getStylesheets().add(css);
-    }
-
-    primaryStage.setScene(scene);
-    primaryStage.setTitle("Dehradun City Browser");
-
-    primaryStage.setMinWidth(1000);
-    primaryStage.setMinHeight(700);
-
-    primaryStage.show();
-
-    loadSection("HOME");
-
-    playEntranceAnimation();
-}
-
-   private Rectangle createAnimatedBackground() {
-
-    Rectangle rect = new Rectangle();
-
-    rect.widthProperty().bind(rootStack.widthProperty());
-    rect.heightProperty().bind(rootStack.heightProperty());
-
-    LinearGradient gradient = new LinearGradient(
-        0, 0, 1, 1,
-        true,
-        CycleMethod.NO_CYCLE,
-        new Stop(0, Color.web("#0f0c29")),
-        new Stop(0.5, Color.web("#302b63")),
-        new Stop(1, Color.web("#24243e"))
-    );
-
-    rect.setFill(gradient);
-
-    return rect;
-}
-
-   private Pane createParticles() {
-
-    Pane pane = new Pane();
-
-    pane.setMouseTransparent(true);
-
-    pane.prefWidthProperty().bind(rootStack.widthProperty());
-    pane.prefHeightProperty().bind(rootStack.heightProperty());
-
-    for (int i = 0; i < 30; i++) {
-
-        Circle particle = new Circle(Math.random() * 3 + 1);
-
-        particle.setFill(
-            Color.web("#ffffff", 0.1 + Math.random() * 0.15)
+        contentScroll = new ScrollPane(contentArea);
+        contentScroll.setFitToWidth(true);
+        contentScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        contentScroll.setStyle(
+            "-fx-background-color: #1A1A1A;" +
+            "-fx-background: #1A1A1A;" +
+            "-fx-border-color: transparent;"
         );
 
-        particle.setCenterX(Math.random() * 1300);
-        particle.setCenterY(Math.random() * 800);
+        mainLayout.setCenter(contentScroll);
 
-        TranslateTransition tt = new TranslateTransition(
-            Duration.seconds(8 + Math.random() * 12),
-            particle
-        );
+        rootStack.getChildren().add(mainLayout);
 
-        tt.setByY(-(200 + Math.random() * 400));
-        tt.setByX((Math.random() - 0.5) * 100);
+        // ── Scene ─────────────────────────────────────────────────────────────
+        Scene scene = new Scene(rootStack, 1300, 800);
 
-        tt.setCycleCount(Animation.INDEFINITE);
-        tt.setAutoReverse(true);
+        Rectangle clip = new Rectangle();
+        clip.setArcWidth(12);
+        clip.setArcHeight(12);
+        clip.widthProperty().bind(scene.widthProperty());
+        clip.heightProperty().bind(scene.heightProperty());
+        rootStack.setClip(clip);
 
-        tt.play();
+        scene.setFill(Color.TRANSPARENT);
 
-        pane.getChildren().add(particle);
+        String css = getInlineCSS();
+        if (css != null && !css.isEmpty()) {
+            scene.getStylesheets().add(css);
+        }
+
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("Dehradun City Browser");
+        primaryStage.setMinWidth(1000);
+        primaryStage.setMinHeight(700);
+        primaryStage.show();
+
+        loadSection("HOME");
+        playEntranceAnimation();
     }
 
-    return pane;
-}
+    // ── Background ────────────────────────────────────────────────────────────
+
+    private Rectangle createBackground() {
+
+        Rectangle rect = new Rectangle();
+        rect.widthProperty().bind(rootStack.widthProperty());
+        rect.heightProperty().bind(rootStack.heightProperty());
+
+        // Clean dark gradient — subtle, not flashy
+        LinearGradient gradient = new LinearGradient(
+            0, 0, 0, 1,
+            true,
+            CycleMethod.NO_CYCLE,
+            new Stop(0,   Color.web("#1A1A1A")),
+            new Stop(0.5, Color.web("#1C1C1C")),
+            new Stop(1,   Color.web("#181818"))
+        );
+        rect.setFill(gradient);
+        return rect;
+    }
+
+    // ── Title bar ─────────────────────────────────────────────────────────────
+
     private HBox createTitleBar(Stage stage) {
+
         HBox titleBar = new HBox();
-        titleBar.setPadding(new Insets(12, 20, 12, 20));
+        titleBar.setPadding(new Insets(10, 20, 10, 20));
         titleBar.setAlignment(Pos.CENTER_LEFT);
         titleBar.setStyle(
-            "-fx-background-color: rgba(255,255,255,0.05);" +
-            "-fx-border-color: rgba(255,255,255,0.08);" +
+            "-fx-background-color: #141414;" +
+            "-fx-border-color: #2A2A2A;" +
             "-fx-border-width: 0 0 1 0;"
         );
 
-        // App icon/logo
+        // ── App branding ──────────────────────────────────────────────────────
         Label logo = new Label("🏔");
-        logo.setFont(Font.font("Segoe UI Emoji", 22));
+        logo.setFont(Font.font("Segoe UI Emoji", 20));
 
         Label title = new Label("  DEHRADUN");
-        title.setFont(Font.font("Segoe UI", FontWeight.BOLD, 16));
-        title.setTextFill(Color.WHITE);
+        title.setFont(Font.font("Segoe UI", FontWeight.BOLD, 15));
+        title.setTextFill(Color.web("#EFEFEF"));
 
         Label subtitle = new Label("  City Explorer");
-        subtitle.setFont(Font.font("Segoe UI", FontWeight.LIGHT, 12));
-        subtitle.setTextFill(Color.web("#ffffff", 0.6));
+        subtitle.setFont(Font.font("Segoe UI", FontWeight.LIGHT, 11));
+        subtitle.setTextFill(Color.web("#5C5C5C"));
 
+        // ── Spacer ────────────────────────────────────────────────────────────
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        // Search bar
-        TextField searchField = createSearchField();
-
-        Region spacer2 = new Region();
-        HBox.setHgrow(spacer2, Priority.ALWAYS);
-
-        // Window controls
+        // ── Window controls ───────────────────────────────────────────────────
         HBox windowControls = createWindowControls(stage);
 
-        titleBar.getChildren().addAll(logo, title, subtitle, spacer, searchField, spacer2, windowControls);
+        titleBar.getChildren().addAll(logo, title, subtitle, spacer, windowControls);
 
         // Draggable
         titleBar.setOnMousePressed(e -> {
@@ -215,63 +181,35 @@ public void start(Stage primaryStage) {
         return titleBar;
     }
 
-    private TextField createSearchField() {
-        TextField field = new TextField();
-        field.setPromptText("🔍  Search Dehradun...");
-        field.setPrefWidth(300);
-        field.setPrefHeight(35);
-        field.setStyle(
-            "-fx-background-color: rgba(255,255,255,0.08);" +
-            "-fx-text-fill: white;" +
-            "-fx-prompt-text-fill: rgba(255,255,255,0.4);" +
-            "-fx-background-radius: 20;" +
-            "-fx-border-radius: 20;" +
-            "-fx-border-color: rgba(255,255,255,0.12);" +
-            "-fx-border-width: 1;" +
-            "-fx-padding: 8 16;" +
-            "-fx-font-size: 13;"
-        );
-        field.focusedProperty().addListener((obs, o, n) -> {
-            if (n) {
-                field.setStyle(field.getStyle().replace(
-                    "rgba(255,255,255,0.08)", "rgba(255,255,255,0.12)"));
-            } else {
-                field.setStyle(field.getStyle().replace(
-                    "rgba(255,255,255,0.12)", "rgba(255,255,255,0.08)"));
-            }
-        });
-        return field;
-    }
+    // ── Window controls — grey/white elegant tones ────────────────────────────
 
     private HBox createWindowControls(Stage stage) {
-        HBox controls = new HBox(8);
+
+        HBox controls = new HBox(6);
         controls.setAlignment(Pos.CENTER);
 
-        Button minimize = createControlButton("—", "#ffd93d");
+        // Minimize — muted grey
+        Button minimize = createControlButton("—", "#808080", "#B0B0B0");
         minimize.setOnAction(e -> stage.setIconified(true));
 
-        Button maximize = createControlButton("□", "#6bcb77");
+        // Maximize — slightly brighter grey
+        Button maximize = createControlButton("□", "#808080", "#B0B0B0");
         maximize.setOnAction(e -> {
+            if (stage.isMaximized()) {
+                stage.setMaximized(false);
+            } else {
+                Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+                stage.setX(bounds.getMinX());
+                stage.setY(bounds.getMinY());
+                stage.setWidth(bounds.getWidth());
+                stage.setHeight(bounds.getHeight());
+            }
+        });
 
-    if (stage.isMaximized()) {
-
-        stage.setMaximized(false);
-
-    } else {
-
-        Rectangle2D bounds =
-            Screen.getPrimary().getVisualBounds();
-
-        stage.setX(bounds.getMinX());
-        stage.setY(bounds.getMinY());
-
-        stage.setWidth(bounds.getWidth());
-        stage.setHeight(bounds.getHeight());
-    }
-});
-        Button close = createControlButton("✕", "#ff6b6b");
+        // Close — subtle warm tone (not aggressive red)
+        Button close = createControlButton("✕", "#808080", "#E05050");
         close.setOnAction(e -> {
-            FadeTransition ft = new FadeTransition(Duration.millis(300), rootStack);
+            FadeTransition ft = new FadeTransition(Duration.millis(250), rootStack);
             ft.setToValue(0);
             ft.setOnFinished(ev -> stage.close());
             ft.play();
@@ -281,130 +219,154 @@ public void start(Stage primaryStage) {
         return controls;
     }
 
-    private Button createControlButton(String text, String color) {
+    /**
+     * Elegant minimal control button.
+     *
+     * @param text       symbol displayed
+     * @param color      default icon colour
+     * @param hoverColor icon colour on hover
+     */
+    private Button createControlButton(String text, String color, String hoverColor) {
+
         Button btn = new Button(text);
-        btn.setPrefSize(32, 32);
-        btn.setStyle(
-            "-fx-background-color: " + color + "33;" +
+        btn.setPrefSize(30, 30);
+
+        String defaultStyle =
+            "-fx-background-color: transparent;" +
             "-fx-text-fill: " + color + ";" +
-            "-fx-background-radius: 50;" +
-            "-fx-border-radius: 50;" +
+            "-fx-background-radius: 6;" +
+            "-fx-border-radius: 6;" +
             "-fx-font-size: 11;" +
-            "-fx-cursor: hand;"
-        );
-        btn.setOnMouseEntered(e -> btn.setStyle(
-            "-fx-background-color: " + color + "66;" +
-            "-fx-text-fill: white;" +
-            "-fx-background-radius: 50;" +
-            "-fx-border-radius: 50;" +
+            "-fx-cursor: hand;";
+
+        String hoverStyle =
+            "-fx-background-color: #2A2A2A;" +
+            "-fx-text-fill: " + hoverColor + ";" +
+            "-fx-background-radius: 6;" +
+            "-fx-border-radius: 6;" +
             "-fx-font-size: 11;" +
-            "-fx-cursor: hand;"
-        ));
-        btn.setOnMouseExited(e -> btn.setStyle(
-            "-fx-background-color: " + color + "33;" +
-            "-fx-text-fill: " + color + ";" +
-            "-fx-background-radius: 50;" +
-            "-fx-border-radius: 50;" +
-            "-fx-font-size: 11;" +
-            "-fx-cursor: hand;"
-        ));
+            "-fx-cursor: hand;";
+
+        btn.setStyle(defaultStyle);
+        btn.setOnMouseEntered(e -> btn.setStyle(hoverStyle));
+        btn.setOnMouseExited (e -> btn.setStyle(defaultStyle));
+
         return btn;
     }
 
+    // ── Sidebar ───────────────────────────────────────────────────────────────
+
     private VBox createSidebar() {
-        VBox sidebar = new VBox(4);
-        sidebar.setPadding(new Insets(20, 10, 20, 10));
-        sidebar.setPrefWidth(220);
+
+        VBox sidebar = new VBox(2);
+        sidebar.setPadding(new Insets(20, 8, 20, 8));
+        sidebar.setPrefWidth(230);
         sidebar.setStyle(
-            "-fx-background-color: rgba(255,255,255,0.03);" +
-            "-fx-border-color: rgba(255,255,255,0.06);" +
+            "-fx-background-color: #1E1E1E;" +
+            "-fx-border-color: #2A2A2A;" +
             "-fx-border-width: 0 1 0 0;"
         );
         sidebar.setAlignment(Pos.TOP_CENTER);
 
-        String[][] menuItems = {
-            {"🏠", "HOME", "Overview"},
-            {"📍", "PLACES", "Places to Visit"},
-            {"🍜", "FOOD", "Food & Cuisine"},
-            {"🌤", "WEATHER", "Weather Info"},
-            {"📰", "NEWS", "Local News"},
-            {"💼", "BUSINESS", "Business Hub"},
-            {"📋", "ESSENTIALS", "Travel Essentials"}
-        };
-
+        // ── Navigation label ──────────────────────────────────────────────────
         Label navLabel = new Label("NAVIGATION");
         navLabel.setFont(Font.font("Segoe UI", FontWeight.BOLD, 10));
-        navLabel.setTextFill(Color.web("#ffffff", 0.3));
-        navLabel.setPadding(new Insets(0, 0, 10, 10));
-
+        navLabel.setTextFill(Color.web("#5C5C5C"));
+        navLabel.setPadding(new Insets(0, 0, 12, 12));
         sidebar.getChildren().add(navLabel);
+
+        // ── Menu items ────────────────────────────────────────────────────────
+        String[][] menuItems = {
+            {"🏠", "HOME",       "Overview"},
+            {"📍", "PLACES",     "Places to Visit"},
+            {"🍜", "FOOD",       "Food & Cuisine"},
+            {"🌤", "WEATHER",    "Weather Info"},
+            {"📰", "NEWS",       "Local News"},
+            {"💼", "BUSINESS",   "Business Hub"},
+            {"📋", "ESSENTIALS", "Travel Essentials"}
+        };
 
         for (String[] item : menuItems) {
             Button navBtn = createNavButton(item[0], item[2], item[1]);
             sidebar.getChildren().add(navBtn);
         }
 
-        // Bottom info
-        Region spacer = new Region();
-        VBox.setVgrow(spacer, Priority.ALWAYS);
-        sidebar.getChildren().add(spacer);
+        // ── Divider ──────────────────────────────────────────────────────────
+        Region dividerSpacer = new Region();
+        VBox.setVgrow(dividerSpacer, Priority.ALWAYS);
+        sidebar.getChildren().add(dividerSpacer);
 
-        VBox infoBox = new VBox(5);
-        infoBox.setPadding(new Insets(15));
+        Separator sep = new Separator();
+        sep.setStyle("-fx-background-color: #333333;");
+        sep.setPadding(new Insets(8, 4, 8, 4));
+        sidebar.getChildren().add(sep);
+
+        // ── Quick fact box ────────────────────────────────────────────────────
+        VBox infoBox = new VBox(6);
+        infoBox.setPadding(new Insets(14));
         infoBox.setStyle(
-            "-fx-background-color: rgba(102,126,234,0.15);" +
-            "-fx-background-radius: 12;" +
-            "-fx-border-radius: 12;" +
-            "-fx-border-color: rgba(102,126,234,0.2);" +
+            "-fx-background-color: #252525;" +
+            "-fx-background-radius: 10;" +
+            "-fx-border-radius: 10;" +
+            "-fx-border-color: #333333;" +
             "-fx-border-width: 1;"
         );
+
         Label infoTitle = new Label("📌 Quick Fact");
         infoTitle.setFont(Font.font("Segoe UI", FontWeight.BOLD, 11));
-        infoTitle.setTextFill(Color.web("#667eea"));
-        Label infoText = new Label("Dehradun is the capital of Uttarakhand, nestled in the Doon Valley.");
+        infoTitle.setTextFill(Color.web("#FFA116"));
+
+        Label infoText = new Label(
+            "Dehradun is the capital of Uttarakhand, nestled in the Doon Valley."
+        );
         infoText.setFont(Font.font("Segoe UI", 10));
-        infoText.setTextFill(Color.web("#ffffff", 0.6));
+        infoText.setTextFill(Color.web("#808080"));
         infoText.setWrapText(true);
+
         infoBox.getChildren().addAll(infoTitle, infoText);
         sidebar.getChildren().add(infoBox);
 
         return sidebar;
     }
 
+    // ── Navigation button ─────────────────────────────────────────────────────
+
     private Button createNavButton(String icon, String text, String sectionId) {
+
         Button btn = new Button(icon + "  " + text);
-        btn.setPrefWidth(200);
-        btn.setPrefHeight(42);
+        btn.setPrefWidth(210);
+        btn.setPrefHeight(40);
         btn.setAlignment(Pos.CENTER_LEFT);
         btn.setFont(Font.font("Segoe UI", 13));
 
         String defaultStyle =
             "-fx-background-color: transparent;" +
-            "-fx-text-fill: rgba(255,255,255,0.6);" +
-            "-fx-background-radius: 10;" +
-            "-fx-border-radius: 10;" +
-            "-fx-padding: 10 16;" +
+            "-fx-text-fill: #A0A0A0;" +
+            "-fx-background-radius: 8;" +
+            "-fx-border-radius: 8;" +
+            "-fx-padding: 8 14;" +
             "-fx-cursor: hand;";
 
         String hoverStyle =
-            "-fx-background-color: rgba(255,255,255,0.08);" +
-            "-fx-text-fill: white;" +
-            "-fx-background-radius: 10;" +
-            "-fx-border-radius: 10;" +
-            "-fx-padding: 10 16;" +
+            "-fx-background-color: #282828;" +
+            "-fx-text-fill: #E0E0E0;" +
+            "-fx-background-radius: 8;" +
+            "-fx-border-radius: 8;" +
+            "-fx-padding: 8 14;" +
             "-fx-cursor: hand;";
 
         String activeStyle =
-            "-fx-background-color: linear-gradient(to right, rgba(102,126,234,0.3), rgba(118,75,162,0.2));" +
-            "-fx-text-fill: white;" +
-            "-fx-background-radius: 10;" +
-            "-fx-border-radius: 10;" +
-            "-fx-border-color: rgba(102,126,234,0.4);" +
-            "-fx-border-width: 1;" +
-            "-fx-padding: 10 16;" +
+            "-fx-background-color: #2A2A2A;" +
+            "-fx-text-fill: #FFFFFF;" +
+            "-fx-background-radius: 8;" +
+            "-fx-border-radius: 8;" +
+            "-fx-border-color: #FFA116;" +
+            "-fx-border-width: 0 0 0 3;" +
+            "-fx-padding: 8 14;" +
             "-fx-cursor: hand;";
 
         btn.setStyle(defaultStyle);
+
         btn.setOnMouseEntered(e -> {
             if (!currentSection.equals(sectionId)) btn.setStyle(hoverStyle);
         });
@@ -414,7 +376,8 @@ public void start(Stage primaryStage) {
         btn.setOnAction(e -> {
             currentSection = sectionId;
             loadSection(sectionId);
-            // Update all nav buttons
+
+            // Reset all siblings, highlight this one
             VBox parent = (VBox) btn.getParent();
             for (var node : parent.getChildren()) {
                 if (node instanceof Button) {
@@ -427,38 +390,43 @@ public void start(Stage primaryStage) {
         return btn;
     }
 
+    // ── Section loader ────────────────────────────────────────────────────────
+
     public void loadSection(String section) {
+
         contentArea.getChildren().clear();
         contentArea.setOpacity(0);
 
         switch (section) {
-            case "HOME": HomeSection.load(contentArea); break;
-            case "PLACES": PlacesSection.load(contentArea); break;
-            case "FOOD": FoodSection.load(contentArea); break;
-            case "WEATHER": WeatherSection.load(contentArea); break;
-            case "NEWS": NewsSection.load(contentArea); break;
-            case "BUSINESS": BusinessSection.load(contentArea); break;
-            case "ESSENTIALS": EssentialsSection.load(contentArea); break;
+            case "HOME"       -> HomeSection.load(contentArea);
+            case "PLACES"     -> PlacesSection.load(contentArea);
+            case "FOOD"       -> FoodSection.load(contentArea);
+            case "WEATHER"    -> WeatherSection.load(contentArea);
+            case "NEWS"       -> NewsSection.load(contentArea);
+            case "BUSINESS"   -> BusinessSection.load(contentArea);
+            case "ESSENTIALS" -> EssentialsSection.load(contentArea);
         }
 
-        // Fade in animation
-        FadeTransition ft = new FadeTransition(Duration.millis(400), contentArea);
+        // Fade in
+        FadeTransition ft = new FadeTransition(Duration.millis(350), contentArea);
         ft.setFromValue(0);
         ft.setToValue(1);
         ft.play();
 
-        // Slide up each child
+        // Staggered slide-up for children
         for (int i = 0; i < contentArea.getChildren().size(); i++) {
             var node = contentArea.getChildren().get(i);
-            node.setTranslateY(30);
+            node.setTranslateY(20);
             node.setOpacity(0);
-            TranslateTransition tt = new TranslateTransition(Duration.millis(400), node);
-            tt.setDelay(Duration.millis(i * 80));
+
+            TranslateTransition tt = new TranslateTransition(Duration.millis(350), node);
+            tt.setDelay(Duration.millis(i * 60L));
             tt.setToY(0);
             tt.setInterpolator(Interpolator.EASE_OUT);
             tt.play();
-            FadeTransition ft2 = new FadeTransition(Duration.millis(400), node);
-            ft2.setDelay(Duration.millis(i * 80));
+
+            FadeTransition ft2 = new FadeTransition(Duration.millis(350), node);
+            ft2.setDelay(Duration.millis(i * 60L));
             ft2.setToValue(1);
             ft2.play();
         }
@@ -466,28 +434,33 @@ public void start(Stage primaryStage) {
         contentScroll.setVvalue(0);
     }
 
+    // ── Entrance animation ────────────────────────────────────────────────────
+
     private void playEntranceAnimation() {
-        rootStack.setScaleX(0.95);
-        rootStack.setScaleY(0.95);
+
+        rootStack.setScaleX(0.97);
+        rootStack.setScaleY(0.97);
         rootStack.setOpacity(0);
 
-        ScaleTransition st = new ScaleTransition(Duration.millis(500), rootStack);
+        ScaleTransition st = new ScaleTransition(Duration.millis(400), rootStack);
         st.setToX(1);
         st.setToY(1);
         st.setInterpolator(Interpolator.EASE_OUT);
         st.play();
 
-        FadeTransition ft = new FadeTransition(Duration.millis(500), rootStack);
+        FadeTransition ft = new FadeTransition(Duration.millis(400), rootStack);
         ft.setToValue(1);
         ft.play();
     }
 
+    // ── CSS helper ────────────────────────────────────────────────────────────
+
     private String getInlineCSS() {
-        // Create temporary CSS file or use inline
-        String css = getClass().getResource("/styles.css") != null ?
-            getClass().getResource("/styles.css").toExternalForm() : "";
-        return css;
+        var res = getClass().getResource("/styles.css");
+        return (res != null) ? res.toExternalForm() : "";
     }
+
+    // ── Entry point ───────────────────────────────────────────────────────────
 
     public static void main(String[] args) {
         launch(args);
